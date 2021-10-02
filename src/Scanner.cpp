@@ -5,6 +5,7 @@
 #include <BLEAdvertisedDevice.h>
 
 #include "Scanner.h"
+#include "System.h"
 
 const uint32_t DEFAULT_STACK_SIZE = 2048;
 
@@ -21,14 +22,6 @@ class PeripheralDeviceCallbacks: public BLEAdvertisedDeviceCallbacks {
       } // Found our server
     }
 };
-
-static void halt(const char *msg)
-{
-    Serial.println(msg);
-    Serial.flush();
-
-    esp_deep_sleep_start();
-}
 
 void scanTask(void *pvParam)
 {
@@ -47,7 +40,7 @@ void scanTask(void *pvParam)
     Serial.println(foundDevices.getCount());
     Serial.println("Scan done!");
     pBLEScan->clearResults();   // delete results fromBLEScan buffer to release memory
-    delay(5000);
+    vTaskDelay(pdMS_TO_TICKS(5000));
   }
 }
 
@@ -55,6 +48,6 @@ void Scanner::start()
 {
   Serial.println("Scanning...");
 
-  if (xTaskCreate(scanTask, "scanner", 2048, NULL, 1, NULL) != pdPASS)
-    halt("Error creating scan task!");
+  if (xTaskCreate(scanTask, "scanner", DEFAULT_STACK_SIZE, NULL, 1, NULL) != pdPASS)
+    System::halt("Error creating scan task!");
 }
