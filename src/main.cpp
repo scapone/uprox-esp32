@@ -5,12 +5,18 @@
 #include <BLEScan.h>
 #include <BLEAdvertisedDevice.h>
 
+// The remote service we wish to connect to.
+static BLEUUID serviceUUID((uint16_t)0x1101);
 int scanTime = 5; //In seconds
 BLEScan* pBLEScan;
 
 class PeripheralDeviceCallbacks: public BLEAdvertisedDeviceCallbacks {
     void onResult(BLEAdvertisedDevice advertisedDevice) {
-      Serial.printf("Advertised Device: %s \n", advertisedDevice.toString().c_str());
+      if (advertisedDevice.haveServiceUUID() && advertisedDevice.getServiceUUID().equals(serviceUUID)) {
+        Serial.printf("Advertised Device: %s \n", advertisedDevice.toString().c_str());
+        Serial.println("Found our device - Stop scanning!"); 
+        advertisedDevice.getScan()->stop();
+      } // Found our server
     }
 };
 
