@@ -20,24 +20,43 @@ class PeripheralDeviceCallbacks: public BLEAdvertisedDeviceCallbacks {
     }
 };
 
-void setup() {
-  Serial.begin(115200);
-  Serial.println("Scanning...");
-
+void scanTask(void *pvParam)
+{
   BLEDevice::init("");
   pBLEScan = BLEDevice::getScan(); //create new scan
   pBLEScan->setAdvertisedDeviceCallbacks(new PeripheralDeviceCallbacks());
   pBLEScan->setActiveScan(true); //active scan uses more power, but get results faster
   pBLEScan->setInterval(100);
   pBLEScan->setWindow(99);  // less or equal setInterval value
+
+  while(true)
+  {
+    // put your main code here, to run repeatedly:
+    BLEScanResults foundDevices = pBLEScan->start(scanTime, false);
+    Serial.print("Devices found: ");
+    Serial.println(foundDevices.getCount());
+    Serial.println("Scan done!");
+    pBLEScan->clearResults();   // delete results fromBLEScan buffer to release memory
+    delay(5000);
+  }
+}
+
+static void halt(const char *msg)
+{
+    Serial.println(msg);
+    Serial.flush();
+
+    esp_deep_sleep_start();
+}
+
+void setup() {
+  Serial.begin(115200);
+  Serial.println("Scanning...");
+
+  if (xTaskCreate(scanTask, "scanner", 4096, NULL, 1, NULL) != pdPASS)
+    halt("Error creating scan task!");
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  BLEScanResults foundDevices = pBLEScan->start(scanTime, false);
-  Serial.print("Devices found: ");
-  Serial.println(foundDevices.getCount());
-  Serial.println("Scan done!");
-  pBLEScan->clearResults();   // delete results fromBLEScan buffer to release memory
-  delay(2000);
+  delay(1000);
 }
