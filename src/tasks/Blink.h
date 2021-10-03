@@ -1,7 +1,7 @@
 #ifndef BLINK_H_
 #define BLINK_H_
 
-#include "tasks/Task.h"
+#include "Task.h"
 
 class Blink : Task
 {
@@ -12,4 +12,4 @@ public:
     virtual void run();
 };
 
-#endif  // BLINK_H_
+#endif // BLINK_H_

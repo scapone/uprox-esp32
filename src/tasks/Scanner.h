@@ -1,7 +1,7 @@
 #ifndef SCANNER_H_
 #define SCANNER_H_
 
-#include "tasks/Task.h"
+#include "Task.h"
 
 class Scanner : Task
 {
@@ -12,4 +12,4 @@ public:
     virtual void run();
 };
 
-#endif  // SCANNER_H_
+#endif // SCANNER_H_

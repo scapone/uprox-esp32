@@ -9,8 +9,8 @@ void task(void *pvParam)
     {
         System::halt("Invalid task parameter!");
     }
-    
-    ((Task*)pvParam)->run();
+
+    ((Task *)pvParam)->run();
 }
 
 void Task::createBlink()
@@ -24,8 +24,8 @@ void Task::createBlink()
 
 void Task::createScanner(const uint32_t usStackDepth)
 {
-  if (xTaskCreate(task, "scanner", usStackDepth, this, 1, NULL) != pdPASS)
-    System::halt("Error creating scan task!");
+    if (xTaskCreate(task, "scanner", usStackDepth, this, 1, NULL) != pdPASS)
+        System::halt("Error creating scan task!");
 }
 
 void Task::setBlinkMode(ledmode_t ledmode)
@@ -35,7 +35,7 @@ void Task::setBlinkMode(ledmode_t ledmode)
         Serial.println("Blink task must be created first!");
         return;
     }
-        
+
     if (xTaskNotify(m_blink, ledmode, eSetValueWithOverwrite) != pdPASS)
         Serial.println("Error setting LED mode!");
 }
