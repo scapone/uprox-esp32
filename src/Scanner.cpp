@@ -23,8 +23,13 @@ class PeripheralDeviceCallbacks: public BLEAdvertisedDeviceCallbacks {
     }
 };
 
-void scanTask(void *pvParam)
+void Scanner::start()
 {
+  createScanner(DEFAULT_STACK_SIZE);
+}
+
+void Scanner::run()
+{  
   BLEDevice::init("");
   BLEScan* pBLEScan = BLEDevice::getScan(); //create new scan
   pBLEScan->setAdvertisedDeviceCallbacks(new PeripheralDeviceCallbacks());
@@ -34,20 +39,15 @@ void scanTask(void *pvParam)
 
   while(true)
   {
+    Serial.println("Scanning...");
+    setBlinkMode(LED_4HZ);
     // put your main code here, to run repeatedly:
     BLEScanResults foundDevices = pBLEScan->start(scanTime, false);
     Serial.print("Devices found: ");
     Serial.println(foundDevices.getCount());
     Serial.println("Scan done!");
     pBLEScan->clearResults();   // delete results fromBLEScan buffer to release memory
+    setBlinkMode(LED_OFF);
     vTaskDelay(pdMS_TO_TICKS(5000));
   }
-}
-
-void Scanner::start()
-{
-  Serial.println("Scanning...");
-
-  if (xTaskCreate(scanTask, "scanner", DEFAULT_STACK_SIZE, NULL, 1, NULL) != pdPASS)
-    System::halt("Error creating scan task!");
 }

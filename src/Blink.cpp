@@ -2,13 +2,16 @@
 #include "Blink.h"
 #include "System.h"
 
-enum ledmode_t : uint8_t { LED_OFF, LED_ON, LED_1HZ, LED_2HZ, LED_4HZ };
-
 const uint32_t LED_PULSE = 25; // 25 ms
 const uint8_t LED_PIN = LED_BUILTIN;
 const bool LED_LEVEL = HIGH;
 
-void blinkTask(void *pvParam)
+void Blink::start()
+{
+    createBlink();
+}
+
+void Blink::run()
 {
   ledmode_t ledmode = LED_OFF;
   
@@ -40,10 +43,4 @@ void blinkTask(void *pvParam)
       vTaskDelay(pdMS_TO_TICKS(period - LED_PULSE));
     }
   }
-}
-
-void Blink::start()
-{
-    if (xTaskCreate(blinkTask, "blink", 1024, NULL, 1, NULL) != pdPASS)
-        System::halt("Error creating blink task!");
 }

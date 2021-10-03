@@ -1,16 +1,19 @@
 #include <Arduino.h>
 #include "System.h"
 #include "Scanner.h"
+#include "Blink.h"
 
 enum buttonstate_t : uint8_t { BTN_RELEASED, BTN_PRESSED, BTN_CLICK, BTN_LONGCLICK };
 
 QueueHandle_t queue;
 Scanner scanner;
+Blink blink;
 
 void setup() {
   Serial.begin(115200);
   Serial.println();
 
+  blink.start();
   scanner.start();
   queue = xQueueCreate(32, sizeof(buttonstate_t));
   if (queue == NULL)
