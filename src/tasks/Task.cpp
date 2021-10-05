@@ -13,19 +13,23 @@ void task(void *pvParam)
     ((Task *)pvParam)->run();
 }
 
-void Task::createBlink()
+TaskHandle_t Task::createTask(const char* pcName, const uint32_t usStackDepth)
 {
     TaskHandle_t handle;
-    if (xTaskCreate(task, "blink", 1024, this, 1, &handle) != pdPASS)
+    if (xTaskCreate(task, pcName, usStackDepth, this, 1, &handle) != pdPASS)
         System::halt("Error creating blink task!");
 
-    m_blink = handle;
+    return handle;
+}
+
+void Task::createBlink()
+{
+    m_blink = createTask("blink", 1024);
 }
 
 void Task::createScanner(const uint32_t usStackDepth)
 {
-    if (xTaskCreate(task, "scanner", usStackDepth, this, 1, NULL) != pdPASS)
-        System::halt("Error creating scan task!");
+    createTask("scanner", usStackDepth);
 }
 
 void Task::setBlinkMode(ledmode_t ledmode)

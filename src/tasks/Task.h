@@ -20,6 +20,7 @@ private:
 protected:
     Task() = default;
     ~Task() = default;
+    TaskHandle_t createTask(const char *pcName, const uint32_t usStackDepth);
     void createBlink();
     void createScanner(const uint32_t usStackDepth);
     void setBlinkMode(ledmode_t ledmode);
