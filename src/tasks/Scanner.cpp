@@ -1,11 +1,14 @@
+#include "Scanner.h"
+
 #include <Arduino.h>
 #include <BLEDevice.h>
 #include <BLEUtils.h>
 #include <BLEScan.h>
 #include <BLEAdvertisedDevice.h>
 
-#include "Scanner.h"
 #include "System.h"
+#include "crypto/Encrypt.h"
+#include "Console.h"
 
 const uint32_t DEFAULT_STACK_SIZE = 2048;
 
@@ -17,12 +20,28 @@ class PeripheralDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
 {
     void onResult(BLEAdvertisedDevice advertisedDevice)
     {
-        if (advertisedDevice.haveServiceUUID() && advertisedDevice.getServiceUUID().equals(serviceUUID))
+        if (advertisedDevice.isAdvertisingService(serviceUUID))
         {
             Serial.printf("Advertised Device: %s \n", advertisedDevice.toString().c_str());
+           
+            if (advertisedDevice.haveServiceData())
+            {
+                std::string serviceData = advertisedDevice.getServiceData(); 
+                
+                Serial.print("Service Data - ");
+                Serial.printf("Length: %d, ", serviceData.length());
+                Serial.print("Data: ");
+                Console::printByteArray(serviceData);
+                Serial.println();
+
+                Serial.printf("Service Data UUID: %s\n", advertisedDevice.getServiceDataUUID().toString().c_str());
+            }
+
             Serial.println("Found our device - Stop scanning!");
             advertisedDevice.getScan()->stop();
-        } // Found our server
+
+            Encrypt::createParcelUuid(83250666);
+        }
     }
 };
 
