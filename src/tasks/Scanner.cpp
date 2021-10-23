@@ -9,6 +9,7 @@
 #include "System.h"
 #include "crypto/Encrypt.h"
 #include "Console.h"
+#include "domain/ServiceData.h"
 
 const uint32_t DEFAULT_STACK_SIZE = 2048;
 
@@ -20,28 +21,33 @@ class PeripheralDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
 {
     void onResult(BLEAdvertisedDevice advertisedDevice)
     {
-        if (advertisedDevice.isAdvertisingService(serviceUUID))
+        if (!advertisedDevice.isAdvertisingService(serviceUUID))
         {
-            Serial.printf("Advertised Device: %s \n", advertisedDevice.toString().c_str());
-           
-            if (advertisedDevice.haveServiceData())
-            {
-                std::string serviceData = advertisedDevice.getServiceData(); 
-                
-                Serial.print("Service Data - ");
-                Serial.printf("Length: %d, ", serviceData.length());
-                Serial.print("Data: ");
-                Console::printByteArray(serviceData);
-                Serial.println();
-
-                Serial.printf("Service Data UUID: %s\n", advertisedDevice.getServiceDataUUID().toString().c_str());
-            }
-
-            Serial.println("Found our device - Stop scanning!");
-            advertisedDevice.getScan()->stop();
-
-            Encrypt::createParcelUuid(83250666);
+            return;
         }
+
+        Serial.printf("Advertised Device: %s \n", advertisedDevice.toString().c_str());
+        
+        if (!advertisedDevice.haveServiceData())
+        {
+            return;
+        }
+
+        std::string serviceData = advertisedDevice.getServiceData(); 
+        if (serviceData.length() != 6)
+        {
+            return;
+        }
+
+        Serial.printf("ServiceData::ServiceData -> ServiceData - Length: %d, Data: ", serviceData.length());
+        Console::printByteArray(serviceData);
+        Serial.println();
+
+        ServiceData sd(serviceData);
+        Encrypt::createParcelUuid(sd.getMagicNumber());
+
+        Serial.println("Found our device - Stop scanning!");
+        advertisedDevice.getScan()->stop();
     }
 };
 
