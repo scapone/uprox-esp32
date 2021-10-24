@@ -6,7 +6,12 @@
 
 class ManufacturerData
 {
+public:
+    ManufacturerData();
+    static ManufacturerData fromString(std::string manufacturerData);
+    bool validate();
 private:
+    ManufacturerData(std::string manufacturerData);
     uint16_t m_companyId;
     uint8_t m_type;
     uint8_t m_length;
@@ -14,9 +19,6 @@ private:
     uint16_t m_major;
     uint16_t m_minor;
     int8_t m_rssi;
-public:
-    ManufacturerData(std::string manufacturerData);
-    bool validate();
 };
 
 #endif // _MANUFACTURER_DATA_H

@@ -22,7 +22,7 @@ void AdvertisedDeviceCallbacks::onResult(BLEAdvertisedDevice advertisedDevice)
 
 void AdvertisedDeviceCallbacks::onDiscover(BLEAdvertisedDevice advertisedDevice)
 {
-    ManufacturerData manufacturerData(advertisedDevice.getManufacturerData());
+    ManufacturerData manufacturerData = ManufacturerData::fromString(advertisedDevice.getManufacturerData());
     if (!manufacturerData.validate())
         return;
 
