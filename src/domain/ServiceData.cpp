@@ -12,7 +12,7 @@ typedef struct
 
 #pragma pack(pop)
 
-ServiceData::ServiceData(std::string &serviceData)
+ServiceData::ServiceData(std::string &serviceData) : m_rssi(0), m_gateId(0), m_magicNumber(0)
 {
     ServiceData_t *data = (ServiceData_t*)serviceData.data();
 

@@ -5,6 +5,7 @@
 #include "crypto/Encrypt.h"
 #include "Console.h"
 #include "domain/ServiceData.h"
+#include "domain/ManufacturerData.h"
 
 // The remote service we wish to connect to.
 static const BLEUUID serviceUUID((uint16_t)0x1101);
@@ -21,6 +22,8 @@ void AdvertisedDeviceCallbacks::onResult(BLEAdvertisedDevice advertisedDevice)
 
 void AdvertisedDeviceCallbacks::onDiscover(BLEAdvertisedDevice advertisedDevice)
 {
+    ManufacturerData manufacturerData(advertisedDevice.getManufacturerData());
+    
     if (!advertisedDevice.haveServiceData())
     {
         // No service data advertised
