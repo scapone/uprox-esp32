@@ -23,7 +23,9 @@ void AdvertisedDeviceCallbacks::onResult(BLEAdvertisedDevice advertisedDevice)
 void AdvertisedDeviceCallbacks::onDiscover(BLEAdvertisedDevice advertisedDevice)
 {
     ManufacturerData manufacturerData(advertisedDevice.getManufacturerData());
-    
+    if (!manufacturerData.validate())
+        return;
+
     if (!advertisedDevice.haveServiceData())
     {
         // No service data advertised

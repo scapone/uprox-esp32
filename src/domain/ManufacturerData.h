@@ -16,6 +16,7 @@ private:
     int8_t m_rssi;
 public:
     ManufacturerData(std::string manufacturerData);
+    bool validate();
 };
 
 #endif // _MANUFACTURER_DATA_H
