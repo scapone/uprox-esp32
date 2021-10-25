@@ -8,8 +8,11 @@ class ManufacturerData
 {
 public:
     ManufacturerData();
+    bool isValid();
+    int8_t getRssi();
+    uint16_t getMinor();
     static ManufacturerData fromString(std::string manufacturerData);
-    bool validate();
+
 private:
     ManufacturerData(std::string manufacturerData);
     uint16_t m_companyId;

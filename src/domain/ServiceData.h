@@ -5,14 +5,18 @@
 
 class ServiceData
 {
+public:
+    ServiceData();
+    int getMagicNumber();
+    int8_t getRssi();
+    bool isValid();
+    static ServiceData fromString(std::string serviceData);
+
 private:
+    ServiceData(std::string &serviceData);
     int8_t m_rssi;
     uint8_t m_gateId;
     int m_magicNumber;
-
-public:
-    ServiceData(std::string &serviceData);
-    int getMagicNumber();
 };
 
 #endif // _SERVICE_DATA_H

@@ -5,6 +5,8 @@
 
 class AdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
 {
+private:
+    uint16_t m_acceptCode = 0;
     void onResult(BLEAdvertisedDevice advertisedDevice);
     void onDiscover(BLEAdvertisedDevice advertisedDevice);
 };

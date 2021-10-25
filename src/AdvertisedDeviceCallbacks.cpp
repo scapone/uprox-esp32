@@ -15,7 +15,7 @@ void AdvertisedDeviceCallbacks::onResult(BLEAdvertisedDevice advertisedDevice)
     if (advertisedDevice.isAdvertisingService(serviceUUID))
     {
         // Filter to 0x1101 service uuid
-        Serial.printf("Advertised Device: %s\n", advertisedDevice.toString().c_str());
+        log_i("Advertised Device: %s", advertisedDevice.toString().c_str());
         onDiscover(advertisedDevice);
     }
 }
@@ -23,29 +23,39 @@ void AdvertisedDeviceCallbacks::onResult(BLEAdvertisedDevice advertisedDevice)
 void AdvertisedDeviceCallbacks::onDiscover(BLEAdvertisedDevice advertisedDevice)
 {
     ManufacturerData manufacturerData = ManufacturerData::fromString(advertisedDevice.getManufacturerData());
-    if (!manufacturerData.validate())
+    if (!manufacturerData.isValid())
         return;
 
-    if (!advertisedDevice.haveServiceData())
+    ServiceData serviceData = ServiceData::fromString(advertisedDevice.getServiceData());
+    if (!serviceData.isValid())
     {
-        // No service data advertised
         return;
     }
 
-    std::string serviceData = advertisedDevice.getServiceData(); 
-    if (serviceData.length() != 6)
-    {
-        Serial.printf("AdvertisedDeviceCallbacks::onDiscover -> Not recognized ServiceData length: %d\n", serviceData.length());
+    if (manufacturerData.getRssi() != serviceData.getRssi())
+        log_w("RSSI from ServiceData %d doesn't match ManufacturerData %d - continue", serviceData.getRssi(), manufacturerData.getRssi());
+
+
+    if (manufacturerData.getMinor() != 0 && m_acceptCode != 0) {
+      if (manufacturerData.getMinor() == m_acceptCode) {
+        log_i("Received accept code: %d - ACCEPTED", m_acceptCode);
+        //clearInterval(this.timer);
+        advertisedDevice.getScan()->stop();
+        m_acceptCode = 0;
         return;
+      }
+      else {
+        log_i("Accept code %d doesn't match %d - continue", manufacturerData.getMinor(), m_acceptCode);
+      }
     }
 
-    Serial.print("AdvertisedDeviceCallbacks::onDiscover -> ServiceData: ");
-    Console::printByteArray(serviceData);
-    Serial.println();
+    if (advertisedDevice.getRSSI() < -75) {
+      log_i("Peripheral RSSI ${peripheral.rssi} less than -75 - skipping");
+      return;
+    }
 
-    ServiceData sd(serviceData);
-    Encrypt::createParcelUuid(sd.getMagicNumber());
-
-    Serial.println("AdvertisedDeviceCallbacks::onDiscover -> Found our device - Stop scanning!");
-    advertisedDevice.getScan()->stop();
+    Encrypt::createParcelUuid(serviceData.getMagicNumber());
+    
+    //log_i("Found our device - Stop scanning!");
+    //advertisedDevice.getScan()->stop();
 }

@@ -4,7 +4,7 @@
 #include <BLEUtils.h>
 #include <netinet/in.h>
 
-static const BLEUUID targetUuid("6dba3e9e-f6e0-4b65-b6a8-1c259e306918");
+static const BLEUUID beaconUUID("6dba3e9e-f6e0-4b65-b6a8-1c259e306918");
 
 #pragma pack(push, 1)
 
@@ -27,7 +27,7 @@ ManufacturerData::ManufacturerData() : m_companyId(0), m_type(0), m_length(0), m
 
 ManufacturerData::ManufacturerData(std::string manufacturerData) : ManufacturerData()
 {
-    ManufacturerData_t *data = (ManufacturerData_t*)manufacturerData.data();
+    ManufacturerData_t *data = (ManufacturerData_t *)manufacturerData.data();
     m_companyId = data->companyId;
     m_type = data->type;
     m_length = data->length;
@@ -40,22 +40,32 @@ ManufacturerData::ManufacturerData(std::string manufacturerData) : ManufacturerD
     log_i("UUID: %s, Major: %d, Minor: %d, RSSI: %d", m_uuid.toString().c_str(), m_major, m_minor, m_rssi);
 }
 
+int8_t ManufacturerData::getRssi()
+{
+    return m_rssi;
+}
+
+uint16_t ManufacturerData::getMinor()
+{
+    return m_minor;
+}
+
 ManufacturerData ManufacturerData::fromString(std::string manufacturerData)
 {
-    char* pHex = BLEUtils::buildHexData(nullptr, (uint8_t*)manufacturerData.data(), manufacturerData.length());
+    char *pHex = BLEUtils::buildHexData(nullptr, (uint8_t *)manufacturerData.data(), manufacturerData.length());
     log_i("Manufacturer data: 0x%s", pHex);
-	free(pHex);
+    free(pHex);
 
     if (manufacturerData.length() == 25)
     {
         return ManufacturerData(manufacturerData);
     }
 
-  	log_i("Not supported manufacturer data length: %d instead of 25", manufacturerData.length());
+    log_i("Not supported ManufacturerData length: %d instead of 25", manufacturerData.length());
     return ManufacturerData();
 }
 
-bool ManufacturerData::validate()
+bool ManufacturerData::isValid()
 {
     if (m_companyId != 0x4c)
     {
@@ -69,7 +79,7 @@ bool ManufacturerData::validate()
         return false;
     }
 
-    if (!m_uuid.equals(targetUuid))
+    if (!m_uuid.equals(beaconUUID))
     {
         log_i("UUID '%s' doesn't match target UUID - skipping", m_uuid.toString().c_str());
         return false;
