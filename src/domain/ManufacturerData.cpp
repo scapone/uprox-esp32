@@ -6,7 +6,7 @@
 
 static const BLEUUID beaconUUID("6dba3e9e-f6e0-4b65-b6a8-1c259e306918");
 
-#pragma pack(push, 1)
+//#pragma pack(push, 1)
 
 typedef struct
 {
@@ -17,9 +17,9 @@ typedef struct
     uint16_t major;
     uint16_t minor;
     int8_t rssi;
-} ManufacturerData_t;
+} __attribute__((packed)) ManufacturerData_t;
 
-#pragma pack(pop)
+//#pragma pack(pop)
 
 ManufacturerData::ManufacturerData() : m_companyId(0), m_type(0), m_length(0), m_major(0), m_minor(0), m_rssi(0)
 {

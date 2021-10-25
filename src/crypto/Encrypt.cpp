@@ -5,14 +5,14 @@
 
 //#pragma pack(push, 1)
 
-typedef struct __attribute__((__packed__))
+typedef struct
 {
     int magicNumber;
     uint8_t networkKey[9];
     uint8_t zeroByte1;
     uint8_t zeroByte2;
     uint8_t crc8;
-} parcel_type;
+} __attribute__((packed)) parcel_type;
 
 //#pragma pack(pop)
 
@@ -39,7 +39,7 @@ uint8_t lArray[256] = {
 
 BLEUUID Encrypt::createParcelUuid(int magicNumber)
 {
-    Serial.printf("Encrypt::createParcelUuid -> magicNumber: %d\n", magicNumber);
+    log_i("magicNumber: %d", magicNumber);
 
     uint8_t buffer[16] = {};
     parcel_type &parcel = (parcel_type &)buffer;
@@ -74,7 +74,7 @@ BLEUUID Encrypt::createParcelUuid(int magicNumber)
     }
 
     BLEUUID parcelUuid(buffer, sizeof(buffer), false);
-    Serial.printf("Encrypt::createParcelUuid -> Parcel Uuid: %s\n", parcelUuid.toString().c_str());
+    log_i("Parcel Uuid: %s", parcelUuid.toString().c_str());
 
     return parcelUuid;
 }

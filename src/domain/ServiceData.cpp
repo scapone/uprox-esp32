@@ -3,16 +3,16 @@
 #include <Arduino.h>
 #include <BLEUtils.h>
 
-#pragma pack(push, 1)
+//#pragma pack(push, 1)
 
 typedef struct
 {
     int8_t rssi;
     uint8_t gateId;
     int magicNumber;
-} ServiceData_t;
+} __attribute__((packed)) ServiceData_t;
 
-#pragma pack(pop)
+//#pragma pack(pop)
 
 ServiceData::ServiceData() : m_rssi(0), m_gateId(0), m_magicNumber(0)
 {
