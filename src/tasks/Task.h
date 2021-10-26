@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 
+const uint32_t DEFAULT_STACK_SIZE = 2048;
+
 enum ledmode_t : uint8_t
 {
     LED_OFF,
@@ -14,19 +16,13 @@ enum ledmode_t : uint8_t
 
 class Task
 {
-private:
-    static TaskHandle_t m_blink;
-
 protected:
-    Task() = default;
-    ~Task() = default;
     TaskHandle_t createTask(const char *pcName, const uint32_t usStackDepth);
-    void createBlink();
-    void createScanner(const uint32_t usStackDepth);
-    void setBlinkMode(ledmode_t ledmode);
-
-public:
+    virtual void start() = 0;
     virtual void run() = 0;
+
+private:
+    static void run(void *pvParam);
 };
 
 #endif // TASK_H_

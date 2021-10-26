@@ -12,7 +12,7 @@ typedef struct
     uint8_t zeroByte1;
     uint8_t zeroByte2;
     uint8_t crc8;
-} __attribute__((packed)) parcel_type;
+} __attribute__((packed)) parcel_t;
 
 //#pragma pack(pop)
 
@@ -42,15 +42,15 @@ BLEUUID Encrypt::createParcelUuid(int magicNumber)
     log_i("magicNumber: %d", magicNumber);
 
     uint8_t buffer[16] = {};
-    parcel_type &parcel = (parcel_type &)buffer;
-    parcel.magicNumber = magicNumber;
+    parcel_t *parcel = (parcel_t *)buffer;
+    parcel->magicNumber = magicNumber;
 
     //memcpy(parcel.networkKey, networkKey, sizeof(networkKey));
-    std::copy(std::begin(networkKey), std::end(networkKey), std::begin(parcel.networkKey));
+    std::copy(std::begin(networkKey), std::end(networkKey), std::begin(parcel->networkKey));
 
-    parcel.zeroByte1 = 0;
-    parcel.zeroByte2 = 0;
-    parcel.crc8 = Dallas::crc8(buffer, 0, 14);
+    parcel->zeroByte1 = 0;
+    parcel->zeroByte2 = 0;
+    parcel->crc8 = Dallas::crc8(buffer, 0, 14);
 
     Gost gost(magicNumber);
 

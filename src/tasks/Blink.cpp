@@ -1,14 +1,15 @@
-#include <Arduino.h>
 #include "Blink.h"
-#include "System.h"
+#include <Arduino.h>
 
 const uint32_t LED_PULSE = 25; // 25 ms
 const uint8_t LED_PIN = LED_BUILTIN;
 const bool LED_LEVEL = HIGH;
 
+TaskHandle_t Blink::m_blink = 0;
+
 void Blink::start()
 {
-    createBlink();
+    m_blink = createTask("blink", 1024);
 }
 
 void Blink::run()
@@ -44,4 +45,16 @@ void Blink::run()
             vTaskDelay(pdMS_TO_TICKS(period - LED_PULSE));
         }
     }
+}
+
+void Blink::setBlinkMode(ledmode_t ledmode)
+{
+    if (m_blink == NULL)
+    {
+        log_w("Blink task must be created first!");
+        return;
+    }
+
+    if (xTaskNotify(m_blink, ledmode, eSetValueWithOverwrite) != pdPASS)
+        log_e("Error setting LED mode!");
 }

@@ -4,10 +4,12 @@
 #include "controls/Button.h"
 #include "tasks/Blink.h"
 #include "tasks/Scanner.h"
+#include "tasks/Advertiser.h"
 
 Button button;
 Blink blink;
 Scanner scanner;
+Advertiser advertiser;
 
 void setup()
 {
@@ -17,6 +19,7 @@ void setup()
     button.init();
     blink.start();
     scanner.start();
+    advertiser.start();
 }
 
 void loop()

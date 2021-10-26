@@ -6,8 +6,6 @@
 class Scanner : Task
 {
 public:
-    Scanner() = default;
-    ~Scanner() = default;
     void start();
     virtual void run();
 };
