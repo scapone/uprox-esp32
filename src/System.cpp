@@ -8,3 +8,8 @@ void System::halt(const char *msg)
 
     esp_deep_sleep_start();
 }
+
+void System::halt()
+{
+    esp_deep_sleep_start();
+}
