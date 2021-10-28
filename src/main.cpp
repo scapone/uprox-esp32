@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <BLEDevice.h>
 
 #include "System.h"
 #include "controls/Button.h"
@@ -18,6 +19,9 @@ void setup()
 
     button.init();
     blink.start();
+
+    BLEDevice::init("A1");
+
     scanner.start();
     advertiser.start();
 }

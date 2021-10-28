@@ -6,6 +6,7 @@
 #include "Console.h"
 #include "domain/ServiceData.h"
 #include "domain/ManufacturerData.h"
+#include "tasks/Advertiser.h"
 
 // The remote service we wish to connect to.
 static const BLEUUID serviceUUID((uint16_t)0x1101);
@@ -63,4 +64,6 @@ void AdvertisedDeviceCallbacks::onDiscover(BLEAdvertisedDevice advertisedDevice)
     // Calculate accept code
     m_acceptCode = (parcelUuid.getNative()->uuid.uuid128[15] << 8) | 0x04;
     log_i("Expected accept code: %d", m_acceptCode);
+
+    Advertiser::advertise(parcelUuid);
 }
