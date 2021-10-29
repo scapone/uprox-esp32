@@ -5,15 +5,6 @@
 
 const uint32_t DEFAULT_STACK_SIZE = 2048;
 
-enum ledmode_t : uint8_t
-{
-    LED_OFF,
-    LED_ON,
-    LED_1HZ,
-    LED_2HZ,
-    LED_4HZ
-};
-
 class Task
 {
 protected:

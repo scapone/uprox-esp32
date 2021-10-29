@@ -7,14 +7,15 @@
 #include "domain/ServiceData.h"
 #include "domain/ManufacturerData.h"
 #include "tasks/Advertiser.h"
+#include "tasks/Blink.h"
 
 // The remote service we wish to connect to.
-static const BLEUUID serviceUUID((uint16_t)0x1101);
-const int8_t targetRssi = -87;
+static const BLEUUID SERVICE_UUID((uint16_t)0x1101);
+const int8_t TARGET_RSSI = -90;
 
 void AdvertisedDeviceCallbacks::onResult(BLEAdvertisedDevice advertisedDevice)
 {
-    if (advertisedDevice.isAdvertisingService(serviceUUID))
+    if (advertisedDevice.isAdvertisingService(SERVICE_UUID))
     {
         // Filter to 0x1101 service uuid
         log_i("Advertised Device: %s", advertisedDevice.toString().c_str());
@@ -24,6 +25,8 @@ void AdvertisedDeviceCallbacks::onResult(BLEAdvertisedDevice advertisedDevice)
 
 void AdvertisedDeviceCallbacks::onDiscover(BLEAdvertisedDevice advertisedDevice)
 {
+    Blink::setBlinkMode(LED_PULSE);
+
     ManufacturerData manufacturerData = ManufacturerData::fromString(advertisedDevice.getManufacturerData());
     if (!manufacturerData.isValid())
         return;
@@ -53,9 +56,9 @@ void AdvertisedDeviceCallbacks::onDiscover(BLEAdvertisedDevice advertisedDevice)
         }
     }
 
-    if (advertisedDevice.getRSSI() < targetRssi)
+    if (advertisedDevice.getRSSI() < TARGET_RSSI)
     {
-        log_i("Peripheral RSSI %d less than %d - skipping", advertisedDevice.getRSSI(), targetRssi);
+        log_i("Peripheral RSSI %d less than %d - skipping", advertisedDevice.getRSSI(), TARGET_RSSI);
         return;
     }
 

@@ -4,6 +4,7 @@
 #include <BLEDevice.h>
 
 #include "System.h"
+#include "Blink.h"
 
 TaskHandle_t Advertiser::m_advertiser = NULL;
 QueueHandle_t Advertiser::m_queue = NULL;
@@ -29,11 +30,19 @@ void Advertiser::run()
         BLEUUID parcelUuid;
         if (xQueueReceive(m_queue, &parcelUuid, portMAX_DELAY) == pdTRUE)
         {
+            log_i("Received Parcel Uuid from queue: %s", parcelUuid.toString().c_str());
             BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
             pAdvertising->addServiceUUID(parcelUuid);
+            
+            log_i("Start advertising");
             pAdvertising->start();
+            Blink::setBlinkMode(LED_ON);
+
             vTaskDelay(pdMS_TO_TICKS(1000));
+            
+            log_i("Stop advertising");
             pAdvertising->stop();
+            Blink::setBlinkMode(LED_OFF);
         }
     }
 }
@@ -46,7 +55,8 @@ void Advertiser::advertise(BLEUUID parcelUuid)
         return;
     }
 
+    log_i("Sending Parcel Uuid to queue: %s", parcelUuid.toString().c_str());
+    
     if (xQueueOverwrite(m_queue, &parcelUuid) != pdPASS)
         log_e("Error sending parcel UUID!");
 }
-

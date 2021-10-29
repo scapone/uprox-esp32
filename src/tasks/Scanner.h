@@ -7,7 +7,7 @@ class Scanner : Task
 {
 public:
     void start();
-    virtual void run();
+    void run();
 };
 
 #endif // SCANNER_H_
