@@ -15,13 +15,13 @@ public:
 
 private:
     ManufacturerData(std::string manufacturerData);
-    uint16_t m_companyId;
-    uint8_t m_type;
-    uint8_t m_length;
+    uint16_t m_companyId = 0;
+    uint8_t m_type = 0;
+    uint8_t m_length = 0;
     BLEUUID m_uuid;
-    uint16_t m_major;
-    uint16_t m_minor;
-    int8_t m_rssi;
+    uint16_t m_major = 0;
+    uint16_t m_minor = 0;
+    int8_t m_rssi = 0;
 };
 
 #endif // _MANUFACTURER_DATA_H

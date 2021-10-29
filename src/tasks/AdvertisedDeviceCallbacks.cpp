@@ -3,11 +3,10 @@
 #include <Arduino.h>
 
 #include "crypto/Encrypt.h"
-#include "Console.h"
 #include "domain/ServiceData.h"
 #include "domain/ManufacturerData.h"
-#include "tasks/Advertiser.h"
-#include "tasks/Blink.h"
+#include "Advertiser.h"
+#include "Blink.h"
 
 // The remote service we wish to connect to.
 static const BLEUUID SERVICE_UUID((uint16_t)0x1101);
@@ -56,11 +55,14 @@ void AdvertisedDeviceCallbacks::onDiscover(BLEAdvertisedDevice advertisedDevice)
         }
     }
 
-    if (advertisedDevice.getRSSI() < TARGET_RSSI)
+    int rssi = advertisedDevice.getRSSI();
+    if (rssi < TARGET_RSSI)
     {
-        log_i("Peripheral RSSI %d less than %d - skipping", advertisedDevice.getRSSI(), TARGET_RSSI);
+        log_i("Peripheral RSSI %d less than %d - skipping", rssi, TARGET_RSSI);
         return;
     }
+
+    log_i("Peripheral RSSI %d more or equal to %d - continue", rssi, TARGET_RSSI);
 
     BLEUUID parcelUuid = Encrypt::createParcelUuid(serviceData.getMagicNumber());
 

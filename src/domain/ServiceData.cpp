@@ -14,7 +14,7 @@ typedef struct
 
 //#pragma pack(pop)
 
-ServiceData::ServiceData() : m_rssi(0), m_gateId(0), m_magicNumber(0)
+ServiceData::ServiceData()
 {
 }
 

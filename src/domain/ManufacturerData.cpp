@@ -21,7 +21,7 @@ typedef struct
 
 //#pragma pack(pop)
 
-ManufacturerData::ManufacturerData() : m_companyId(0), m_type(0), m_length(0), m_major(0), m_minor(0), m_rssi(0)
+ManufacturerData::ManufacturerData()
 {
 }
 

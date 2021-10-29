@@ -14,9 +14,9 @@ public:
 
 private:
     ServiceData(std::string &serviceData);
-    int8_t m_rssi;
-    uint8_t m_gateId;
-    int m_magicNumber;
+    int8_t m_rssi = 0;
+    uint8_t m_gateId = 0;
+    int m_magicNumber = 0;
 };
 
 #endif // _SERVICE_DATA_H
