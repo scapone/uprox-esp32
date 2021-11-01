@@ -10,7 +10,7 @@
 
 // The remote service we wish to connect to.
 static const BLEUUID SERVICE_UUID((uint16_t)0x1101);
-const int8_t TARGET_RSSI = -90;
+const int8_t TARGET_RSSI = -89;
 
 void AdvertisedDeviceCallbacks::onResult(BLEAdvertisedDevice advertisedDevice)
 {
@@ -45,6 +45,7 @@ void AdvertisedDeviceCallbacks::onDiscover(BLEAdvertisedDevice advertisedDevice)
         {
             log_i("Received accept code: %d - ACCEPTED", m_acceptCode);
             //clearInterval(this.timer);
+            Blink::setBlinkMode(LED_ON);
             advertisedDevice.getScan()->stop();
             m_acceptCode = 0;
             return;
@@ -55,20 +56,34 @@ void AdvertisedDeviceCallbacks::onDiscover(BLEAdvertisedDevice advertisedDevice)
         }
     }
 
+    // Must be after accept code check
     int rssi = advertisedDevice.getRSSI();
     if (rssi < TARGET_RSSI)
     {
-        log_i("Peripheral RSSI %d less than %d - skipping", rssi, TARGET_RSSI);
+        log_i("Peripheral RSSI %d < target RSSI %d - skipping", rssi, TARGET_RSSI);
         return;
     }
 
-    log_i("Peripheral RSSI %d more or equal to %d - continue", rssi, TARGET_RSSI);
+    log_i("Peripheral RSSI %d >= target RSSI %d - continue", rssi, TARGET_RSSI);
 
-    BLEUUID parcelUuid = Encrypt::createParcelUuid(serviceData.getMagicNumber());
+    advertise(serviceData.getMagicNumber());
+}
+
+void AdvertisedDeviceCallbacks::advertise(int magicNumber)
+{
+    if (m_magicNumber == magicNumber)
+    {
+        log_i("Magic number %d was advertised already - skipping", magicNumber);
+        return;
+    }
+
+    BLEUUID parcelUuid = Encrypt::createParcelUuid(magicNumber);
 
     // Calculate accept code
     m_acceptCode = (parcelUuid.getNative()->uuid.uuid128[15] << 8) | 0x04;
     log_i("Expected accept code: %d", m_acceptCode);
 
     Advertiser::advertise(parcelUuid);
+    m_magicNumber = magicNumber;
 }
+

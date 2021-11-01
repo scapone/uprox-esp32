@@ -38,7 +38,7 @@ void Advertiser::run()
             pAdvertising->start();
             Blink::setBlinkMode(LED_ON);
 
-            vTaskDelay(pdMS_TO_TICKS(1000));
+            vTaskDelay(pdMS_TO_TICKS(2000));
             
             log_i("Stop advertising");
             pAdvertising->stop();

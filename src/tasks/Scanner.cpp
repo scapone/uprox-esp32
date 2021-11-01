@@ -31,7 +31,7 @@ void Scanner::run()
         BLEScanResults foundDevices = pBLEScan->start(scanTime, false);
         Serial.println("Scan done!");
         pBLEScan->clearResults(); // delete results fromBLEScan buffer to release memory
-        Blink::setBlinkMode(LED_OFF);
+        //Blink::setBlinkMode(LED_OFF);
         vTaskDelay(pdMS_TO_TICKS(5000));
     }
 }
