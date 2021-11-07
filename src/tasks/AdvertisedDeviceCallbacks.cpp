@@ -10,7 +10,7 @@
 
 // The remote service we wish to connect to.
 static const BLEUUID SERVICE_UUID((uint16_t)0x1101);
-const int8_t TARGET_RSSI = -89;
+const int8_t TARGET_RSSI = -90;
 
 void AdvertisedDeviceCallbacks::onResult(BLEAdvertisedDevice advertisedDevice)
 {
@@ -44,8 +44,6 @@ void AdvertisedDeviceCallbacks::onDiscover(BLEAdvertisedDevice advertisedDevice)
         if (manufacturerData.getMinor() == m_acceptCode)
         {
             log_i("Received accept code: %d - ACCEPTED", m_acceptCode);
-            //clearInterval(this.timer);
-            Blink::setBlinkMode(LED_ON);
             advertisedDevice.getScan()->stop();
             m_acceptCode = 0;
             return;
@@ -56,7 +54,7 @@ void AdvertisedDeviceCallbacks::onDiscover(BLEAdvertisedDevice advertisedDevice)
         }
     }
 
-    // Must be after accept code check
+    // Must be checked after accept code check
     int rssi = advertisedDevice.getRSSI();
     if (rssi < TARGET_RSSI)
     {

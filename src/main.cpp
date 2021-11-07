@@ -20,7 +20,7 @@ void setup()
     button.init();
     blink.start();
 
-    BLEDevice::init("A1");
+    BLEDevice::init("");
 
     scanner.start();
     advertiser.start();

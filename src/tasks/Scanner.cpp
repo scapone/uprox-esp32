@@ -6,7 +6,7 @@
 #include "Blink.h"
 #include "AdvertisedDeviceCallbacks.h"
 
-const int scanTime = 5; //In seconds
+const int scanTime = 0; //In seconds, 0 - infinite
 
 void Scanner::start()
 {
@@ -21,7 +21,7 @@ void Scanner::run()
     pBLEScan->setAdvertisedDeviceCallbacks(&callbacks);
     pBLEScan->setActiveScan(true); //active scan uses more power, but get results faster
     pBLEScan->setInterval(100);
-    pBLEScan->setWindow(99); // less or equal setInterval value
+    pBLEScan->setWindow(100); // less or equal setInterval value
 
     while (true)
     {
@@ -31,7 +31,6 @@ void Scanner::run()
         BLEScanResults foundDevices = pBLEScan->start(scanTime, false);
         Serial.println("Scan done!");
         pBLEScan->clearResults(); // delete results fromBLEScan buffer to release memory
-        //Blink::setBlinkMode(LED_OFF);
-        vTaskDelay(pdMS_TO_TICKS(5000));
+        vTaskDelay(pdMS_TO_TICKS(2000));
     }
 }
