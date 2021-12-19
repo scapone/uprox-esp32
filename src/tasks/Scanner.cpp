@@ -6,7 +6,7 @@
 #include "Blink.h"
 #include "AdvertisedDeviceCallbacks.h"
 
-const int scanTime = 0; //In seconds, 0 - infinite
+const int scanTime = 5; //In seconds, 0 - infinite
 
 void Scanner::start()
 {
@@ -15,13 +15,14 @@ void Scanner::start()
 
 void Scanner::run()
 {
+    log_i("Free heap size is %u bytes", esp_get_free_heap_size());
     BLEScan *pBLEScan = BLEDevice::getScan(); //create new scan
     
     AdvertisedDeviceCallbacks callbacks;
-    pBLEScan->setAdvertisedDeviceCallbacks(&callbacks);
-    pBLEScan->setActiveScan(true); //active scan uses more power, but get results faster
-    pBLEScan->setInterval(100);
-    pBLEScan->setWindow(100); // less or equal setInterval value
+    pBLEScan->setAdvertisedDeviceCallbacks(&callbacks, true);
+    pBLEScan->setActiveScan(true);
+    pBLEScan->setInterval(120); // make sure that scanning window is more than the advertising interval + 10ms to guarantee discovery
+    pBLEScan->setWindow(120); // less or equal setInterval value
 
     while (true)
     {
@@ -32,5 +33,6 @@ void Scanner::run()
         Serial.println("Scan done!");
         pBLEScan->clearResults(); // delete results fromBLEScan buffer to release memory
         vTaskDelay(pdMS_TO_TICKS(2000));
+        log_i("Free heap size is %u bytes", esp_get_free_heap_size());
     }
 }
