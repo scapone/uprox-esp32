@@ -4,13 +4,15 @@
 #include "System.h"
 #include "controls/Button.h"
 #include "tasks/Blink.h"
+#include "tasks/Semaphore.h"
 #include "tasks/Scanner.h"
 #include "tasks/Advertiser.h"
 
 Button button;
 Blink blink;
-Scanner scanner;
-Advertiser advertiser;
+Semaphore semaphore;
+Scanner scanner(semaphore);
+Advertiser advertiser(semaphore);
 
 void setup()
 {

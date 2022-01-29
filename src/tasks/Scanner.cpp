@@ -8,6 +8,10 @@
 
 const int scanTime = 5; //In seconds, 0 - infinite
 
+Scanner::Scanner(Semaphore &semaphore) : m_semaphore(semaphore)
+{
+}
+
 void Scanner::start()
 {
     createTask("scanner", DEFAULT_STACK_SIZE);
@@ -26,13 +30,16 @@ void Scanner::run()
 
     while (true)
     {
+        m_semaphore.give();
+
         Serial.println("Scanning...");
         Blink::setBlinkMode(LED_1HZ);
         // put your main code here, to run repeatedly:
         BLEScanResults foundDevices = pBLEScan->start(scanTime, false);
         Serial.println("Scan done!");
         pBLEScan->clearResults(); // delete results fromBLEScan buffer to release memory
-        vTaskDelay(pdMS_TO_TICKS(2000));
+        
+        m_semaphore.take(2000);
         log_i("Free heap size is %u bytes", esp_get_free_heap_size());
     }
 }

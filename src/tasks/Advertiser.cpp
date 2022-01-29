@@ -9,6 +9,10 @@
 TaskHandle_t Advertiser::m_advertiser = NULL;
 QueueHandle_t Advertiser::m_queue = NULL;
 
+Advertiser::Advertiser(Semaphore &semaphore) : m_semaphore(semaphore)
+{
+}
+
 void Advertiser::start()
 {
     m_queue = xQueueCreate(1, sizeof(BLEUUID));
@@ -30,6 +34,8 @@ void Advertiser::run()
         BLEUUID parcelUuid;
         if (xQueueReceive(m_queue, &parcelUuid, portMAX_DELAY) == pdTRUE)
         {
+            m_semaphore.take();
+            
             log_i("Received Parcel Uuid from queue: %s", parcelUuid.toString().c_str());
             BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
             pAdvertising->addServiceUUID(parcelUuid);
@@ -39,10 +45,12 @@ void Advertiser::run()
             Blink::setBlinkMode(LED_ON);
 
             vTaskDelay(pdMS_TO_TICKS(2000));
-            
+
             log_i("Stop advertising");
             pAdvertising->stop();
             Blink::setBlinkMode(LED_OFF);
+
+            m_semaphore.give();
         }
     }
 }
