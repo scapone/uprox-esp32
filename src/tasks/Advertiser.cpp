@@ -24,6 +24,8 @@ void Advertiser::start()
 
 void Advertiser::run()
 {
+    bool isAdvertising = false;
+    
     while (true)
     {
         //BLEUUID parcelUuid("12d1b564-9595-bea5-1972-0939fb4a4dea");
@@ -31,18 +33,22 @@ void Advertiser::run()
         if (xQueueReceive(m_queue, &parcelUuid, portMAX_DELAY) == pdTRUE)
         {
             log_i("Received Parcel Uuid from queue: %s", parcelUuid.toString().c_str());
+            
+            if (isAdvertising)
+            {
+                log_i("Stop advertising");
+                BLEDevice::stopAdvertising();
+                Blink::setBlinkMode(LED_OFF);
+                isAdvertising = false;
+            }
+
             BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
             pAdvertising->addServiceUUID(parcelUuid);
             
             log_i("Start advertising");
-            pAdvertising->start();
             Blink::setBlinkMode(LED_ON);
-
-            vTaskDelay(pdMS_TO_TICKS(2000));
-            
-            log_i("Stop advertising");
-            pAdvertising->stop();
-            Blink::setBlinkMode(LED_OFF);
+            pAdvertising->start();
+            isAdvertising = true;
         }
     }
 }

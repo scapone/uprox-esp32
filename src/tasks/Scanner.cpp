@@ -27,12 +27,12 @@ void Scanner::run()
     while (true)
     {
         Serial.println("Scanning...");
-        Blink::setBlinkMode(LED_1HZ);
+        Blink::setBlinkMode(LED_PULSE);
         // put your main code here, to run repeatedly:
         BLEScanResults foundDevices = pBLEScan->start(scanTime, false);
         Serial.println("Scan done!");
         pBLEScan->clearResults(); // delete results fromBLEScan buffer to release memory
-        vTaskDelay(pdMS_TO_TICKS(2000));
+
         log_i("Free heap size is %u bytes", esp_get_free_heap_size());
     }
 }

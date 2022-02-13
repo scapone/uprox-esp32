@@ -58,13 +58,13 @@ void AdvertisedDeviceCallbacks::onDiscover(BLEAdvertisedDevice advertisedDevice)
     int rssi = advertisedDevice.getRSSI();
     if (rssi < TARGET_RSSI)
     {
-        log_i("Peripheral RSSI %d < target RSSI %d - experimental continue", rssi, TARGET_RSSI);
+        log_i("Peripheral RSSI %d < target RSSI %d", rssi, TARGET_RSSI);
         //log_i("Peripheral RSSI %d < target RSSI %d - skipping", rssi, TARGET_RSSI);
         //return;
     }
     else
     {
-        log_i("Peripheral RSSI %d >= target RSSI %d - continue", rssi, TARGET_RSSI);
+        log_i("Peripheral RSSI %d >= target RSSI %d", rssi, TARGET_RSSI);
     }
 
     advertise(serviceData.getMagicNumber());
@@ -74,8 +74,8 @@ void AdvertisedDeviceCallbacks::advertise(int magicNumber)
 {
     if (m_magicNumber == magicNumber)
     {
-        log_i("Magic number %d was advertised already - skipping", magicNumber);
-        return;
+        log_i("Magic number %d was advertised already", magicNumber);
+        //return;
     }
 
     BLEUUID parcelUuid = Encrypt::createParcelUuid(magicNumber);
