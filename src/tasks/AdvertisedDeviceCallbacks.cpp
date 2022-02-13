@@ -24,17 +24,17 @@ void AdvertisedDeviceCallbacks::onResult(BLEAdvertisedDevice advertisedDevice)
 
 void AdvertisedDeviceCallbacks::onDiscover(BLEAdvertisedDevice advertisedDevice)
 {
-    Blink::setBlinkMode(LED_PULSE);
-
     ManufacturerData manufacturerData = ManufacturerData::fromString(advertisedDevice.getManufacturerData());
     if (!manufacturerData.isValid())
         return;
 
+    Blink::setBlinkMode(LED_PULSE);
+
     ServiceData serviceData = ServiceData::fromString(advertisedDevice.getServiceData());
     if (!serviceData.isValid())
-    {
         return;
-    }
+
+    Blink::setBlinkMode(LED_PULSE);
 
     if (manufacturerData.getRssi() != serviceData.getRssi())
         log_w("RSSI from ServiceData %d doesn't match ManufacturerData %d - continue", serviceData.getRssi(), manufacturerData.getRssi());
@@ -58,11 +58,14 @@ void AdvertisedDeviceCallbacks::onDiscover(BLEAdvertisedDevice advertisedDevice)
     int rssi = advertisedDevice.getRSSI();
     if (rssi < TARGET_RSSI)
     {
-        log_i("Peripheral RSSI %d < target RSSI %d - skipping", rssi, TARGET_RSSI);
-        return;
+        log_i("Peripheral RSSI %d < target RSSI %d - experimental continue", rssi, TARGET_RSSI);
+        //log_i("Peripheral RSSI %d < target RSSI %d - skipping", rssi, TARGET_RSSI);
+        //return;
     }
-
-    log_i("Peripheral RSSI %d >= target RSSI %d - continue", rssi, TARGET_RSSI);
+    else
+    {
+        log_i("Peripheral RSSI %d >= target RSSI %d - continue", rssi, TARGET_RSSI);
+    }
 
     advertise(serviceData.getMagicNumber());
 }

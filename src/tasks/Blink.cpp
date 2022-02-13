@@ -41,7 +41,10 @@ void Blink::run()
             digitalWrite(LED_PIN, !LED_LEVEL);
 
             if (ledmode == LED_PULSE)
+            {
                 ledmode = LED_OFF;
+                vTaskDelay(pdMS_TO_TICKS(LED_PULSE_MS));
+            }
             else
             {
                 uint32_t periodMs = ledmode == LED_1HZ ? 1000 : ledmode == LED_2HZ ? 500 : 250;
