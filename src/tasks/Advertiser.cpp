@@ -33,7 +33,6 @@ void Advertiser::run()
             log_i("Received Parcel Uuid from queue: %s", parcelUuid.toString().c_str());
             
             BLEAdvertisementData advertisingData;
-            advertisingData.setFlags(ESP_BLE_ADV_FLAG_GEN_DISC | ESP_BLE_ADV_FLAG_BREDR_NOT_SPT);
             advertisingData.setCompleteServices(parcelUuid);
 
             BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
