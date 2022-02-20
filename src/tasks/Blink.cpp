@@ -3,7 +3,6 @@
 
 const uint32_t LED_PULSE_MS = 25; // 25 ms
 const uint8_t LED_PIN = LED_BUILTIN;
-const bool LED_LEVEL = HIGH;
 
 TaskHandle_t Blink::m_blink = 0;
 
@@ -15,9 +14,10 @@ void Blink::start()
 void Blink::run()
 {
     LedMode_t ledmode = LED_OFF;
+    bool ledlevel = LOW;
 
     pinMode(LED_PIN, OUTPUT);
-    digitalWrite(LED_PIN, !LED_LEVEL);
+    digitalWrite(LED_PIN, ledlevel);
 
     while (true)
     {
@@ -29,16 +29,18 @@ void Blink::run()
             ledmode = (LedMode_t)notifyValue;
 
             if (ledmode == LED_OFF)
-                digitalWrite(LED_PIN, !LED_LEVEL);
+                ledlevel = LOW;
             else if (ledmode == LED_ON)
-                digitalWrite(LED_PIN, LED_LEVEL);
+                ledlevel = HIGH;
+
+            digitalWrite(LED_PIN, ledlevel);
         }
 
         if (ledmode >= LED_PULSE)
         {
-            digitalWrite(LED_PIN, LED_LEVEL);
+            digitalWrite(LED_PIN, !ledlevel);
             vTaskDelay(pdMS_TO_TICKS(LED_PULSE_MS));
-            digitalWrite(LED_PIN, !LED_LEVEL);
+            digitalWrite(LED_PIN, ledlevel);
 
             if (ledmode == LED_PULSE)
             {
